@@ -1,4 +1,4 @@
 ﻿  cryptography.cpp
-c:\users\jason\documents\cryptography\cryptography\cryptography.cpp(31): warning C4018: '<': signed/unsigned mismatch
-c:\users\jason\documents\cryptography\cryptography\cryptography.cpp(74): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\jason\documents\cryptography\cryptography\cryptography.cpp(38): warning C4018: '<': signed/unsigned mismatch
+c:\users\jason\documents\cryptography\cryptography\cryptography.cpp(83): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   Cryptography.vcxproj -> C:\Users\Jason\Documents\Cryptography\Debug\Cryptography.exe

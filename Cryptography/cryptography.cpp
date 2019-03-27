@@ -6,14 +6,14 @@
 #include <vector>
 using namespace std;
 
-char orig_data[3][3];
-int ascii_data[3][3];
+double determinant;
+
 int encrypt_array[3][3];
 double inverse_array[3][3];
 int transpose_matrix[3][3];
-double determinant;
 
 string plaintext;
+
 
 int calculate_descriminant(int, int, int, int);
 
@@ -23,26 +23,30 @@ int main() {
 	void generate_inverse_matrix();
 	getline(cin, plaintext);
 	int length_of_input = plaintext.length();
-	int length_of_array = (length_of_input / 3) + ((length_of_input % 3) / 3);
-	cout << length_of_input;
-	vector<vector<char>>orig_data(length_of_array, vector<char>(3));
+	int length_of_array = (length_of_input / 3);
 
+	if (length_of_input % 3 > 0) {
+		length_of_array++;
+	}
+
+	else;
+
+	vector<vector<char>>orig_data(length_of_array, vector<char>(3));
+	vector<vector<int>>ascii_data(length_of_array, vector<int>(3));
 
 	for (int i = 0; i < plaintext.length(); i++) {
 		char temp = plaintext.at(i);
+		cout << temp << " " << i / 3 << " " << i % 3 << " ";
 		orig_data[i / 3][i % 3] = temp;
 	}
 
-	cout << length_of_array << endl;
 	for (int i = 0; i < length_of_array; i++) {
 		for (int x = 0; x < 3; x++) {
-			cout << orig_data[i][x] << "Mafuger" << endl;
+			cout << orig_data[i][x] << endl;
+			ascii_data[i][x] = static_cast<int>(orig_data[i][x]);
 		}
 	}
 
-	
-
-	get_ascii_array();
 	generate_encryption_matrix();
 	generate_inverse_matrix();
 
@@ -51,7 +55,9 @@ int main() {
 			cout << encrypt_array[i][x] << " ";
 		}
 	}
+
 	cout << endl;
+
 	for (int i = 0; i < 3; i++) {
 		for (int x = 0; x < 3; x++) {
 			cout << inverse_array[i][x] << " ";
@@ -59,15 +65,6 @@ int main() {
 	}
 
 	return 0;
-}
-
-void get_ascii_array() {
-	// Generates an ascii array from the 
-	for (int i = 0; i < 3; i++) {
-		for (int x = 0; x < 3; x++) {
-			ascii_data[i][x] = static_cast<int>(orig_data[x][i]);
-		}
-	}
 }
 
 void generate_encryption_matrix() {
