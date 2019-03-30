@@ -1,9 +1,11 @@
 #include <iostream>
 #include <ios>
+#include <fstream>
 #include <string>
 #include <Windows.h>
 #include <ctime>
 #include <vector>
+#include <sstream>
 using namespace std;
 
 double determinant;
@@ -18,36 +20,140 @@ string plaintext;
 int calculate_descriminant(int, int, int, int);
 
 int main() {
-	void get_ascii_array();
-	void generate_encryption_matrix();
-	void generate_inverse_matrix();
-	getline(cin, plaintext);
-	int length_of_input = plaintext.length();
-	int length_of_array = (length_of_input / 3);
+	while (1) {
+		char user_response;
+		cout << "Would you like to encrypt or decrypt? [e/d] ";
+		cin >> user_response;
 
-	if (length_of_input % 3 > 0) {
-		length_of_array++;
-	}
+		void get_ascii_array();
+		void generate_encryption_matrix();
+		void generate_inverse_matrix();
+		void generate_determinant();
 
-	else;
+		if (user_response == 'e') {
+			cout << "What phrase do you want to encrypt? ";
+			getline(cin, plaintext);
+			getline(cin, plaintext);
+			cout << "What would you like to call the file?" << endl;
+			string file_name;
+			getline(cin, file_name);
+			int length_of_input = plaintext.length();
+			int length_of_array = (length_of_input / 3);
 
-	vector<vector<char>>orig_data(length_of_array, vector<char>(3));
-	vector<vector<int>>ascii_data(length_of_array, vector<int>(3));
+			if (length_of_input % 3 > 0) {
+				length_of_array++;
+			}
 
-	for (int i = 0; i < plaintext.length(); i++) {
-		char temp = plaintext.at(i);
-		cout << temp << " " << i / 3 << " " << i % 3 << " ";
-		orig_data[i / 3][i % 3] = temp;
-	}
+			else;
 
-	for (int i = 0; i < length_of_array; i++) {
-		for (int x = 0; x < 3; x++) {
-			cout << orig_data[i][x] << endl;
-			ascii_data[i][x] = static_cast<int>(orig_data[i][x]);
+			vector<vector<char>>orig_data(length_of_array, vector<char>(3));
+			vector<vector<int>>ascii_data(length_of_array, vector<int>(3));
+			vector<vector<int>>encrypted_data(length_of_array, vector<int>(3));
+
+			for (int i = 0; i < plaintext.length(); i++) {
+				char temp = plaintext.at(i);
+				orig_data[i / 3][i % 3] = temp;
+			}
+
+			for (int i = 0; i < length_of_array; i++) {
+				for (int x = 0; x < 3; x++) {
+					ascii_data[i][x] = static_cast<int>(orig_data[i][x]);
+				}
+			}
+
+			if (length_of_input % 3 > 0) {
+				for (int x = length_of_input % 3; x < 3; x++) {
+					ascii_data[length_of_array - 1][x] = -1;
+				}
+			}
+
+			generate_encryption_matrix();
+
+			for (int i = 0; i < length_of_array; i++) {
+				for (int x = 0; x < 3; x++) {
+					for (int y = 0; y < 3; y++) {
+						encrypted_data[i][x] += encrypt_array[y][x] * ascii_data[i][x];
+					}
+				}
+			}
+
+			ofstream out_file;
+			out_file.open(file_name + ".txt");
+			out_file << length_of_array << "\n";
+			for (int i = 0; i < length_of_array; i++) {
+				for (int x = 0; x < 3; x++) {
+					out_file << encrypted_data[i][x] << "\n";
+				}
+			}
+
+			for (int i = 0; i < 3; i++) {
+				for (int x = 0; x < 3; x++) {
+					out_file << encrypt_array[i][x] << "\n";
+				}
+			}
+
+			out_file.close();
+		}
+
+		if (user_response == 'd') {
+			cout << "What file do you want to open? ";
+
+			ifstream in_file;
+			in_file.open("work.txt");
+
+			int counter = 1;
+			string temp;
+			int array_length;
+			getline(in_file, temp);
+			stringstream geek(temp);
+			geek >> array_length;
+			vector<vector<int>>new_ascii_data(array_length, vector<int>(3));
+			vector<vector<int>>unencrypted_data(array_length, vector<int>(3));
+
+			for (int i = 0; i < array_length * 3; i++) {
+				getline(in_file, temp);
+				stringstream geek(temp);
+				int temp_int;
+				geek >> temp_int;
+				new_ascii_data[i / 3][i % 3] = temp_int;
+			}
+			
+			for (int i = 0; i < 3; i++) {
+				for (int x = 0; x < 3; x++) {
+					getline(in_file, temp);
+					stringstream geek(temp);
+					int temp_int;
+					geek >> temp_int;
+					encrypt_array[i][x] = temp_int;
+				}
+			}
+
+			in_file.close();
+			generate_determinant();
+			generate_inverse_matrix();
+			for (int i = 0; i < 3; i++) {
+				for (int x = 0; x < 3; x++) {
+					cout << inverse_array[i][x] << endl;
+				}
+			}
+
+			for (int i = 0; i < array_length; i++) {
+				for (int x = 0; x < 3; x++) {
+					for (int y = 0; y < 3; y++) {
+						unencrypted_data[i][x] += inverse_array[y][x] * new_ascii_data[i][x];
+					}
+				}
+			}
+
+			for (int i = 0; i < array_length; i++) {
+				for (int x = 0; x < 3; x++) {
+					cout << unencrypted_data[i][x] << endl;
+				}
+			}
 		}
 	}
 
-	generate_encryption_matrix();
+	/*
 	generate_inverse_matrix();
 
 	for (int i = 0; i < 3; i++) {
@@ -63,8 +169,15 @@ int main() {
 			cout << inverse_array[i][x] << " ";
 		}
 	}
-
+	*/
 	return 0;
+}
+
+
+void generate_determinant() {
+	int right_row = (encrypt_array[0][0] * encrypt_array[1][1] * encrypt_array[2][2]) + (encrypt_array[1][0] * encrypt_array[2][1] * encrypt_array[2][2]) + (encrypt_array[2][0] * encrypt_array[0][1] * encrypt_array[1][2]);
+	int left_row = (encrypt_array[0][2] * encrypt_array[1][1] * encrypt_array[2][0]) + (encrypt_array[1][2] * encrypt_array[2][1] * encrypt_array[0][0]) + (encrypt_array[2][2] * encrypt_array[0][1] * encrypt_array[1][0]);
+	determinant = right_row - left_row;
 }
 
 void generate_encryption_matrix() {
